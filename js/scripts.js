@@ -104,7 +104,81 @@ const wordsToUpperCase=(wordsExtracted)=>{
   return wordsInUpperCase;
 }
 
-// 6️⃣Convierte cada palabra de towerData.levelThree.words a minúsculas y guárdalas en towerData.levelFive.lowercasedWords.
+// Convierte cada palabra de towerData.levelThree.words a minúsculas y guárdalas en towerData.levelFive.lowercasedWords.
+
+const wordsTolowerCase=(wordsExtracted)=>{
+  //const wordsInUpperCase=wordsExtracted.toUpperCase(); ??no puedo por que es un array??
+  const wordsInLowerCase=[];
+
+  for (const words of wordsExtracted) {
+    wordsInLowerCase.push(words.toLowerCase());
+    
+  }
+  return wordsInLowerCase;
+}
+
+//6️⃣ Nivel Seis: El Encriptador de Secretos
+// Crea un mensaje secreto aplicando las siguientes reglas:
+
+// Vocales se reemplazan por números:
+
+// a → 1, e → 2, i → 3, o → 4, u → 5
+
+// Investiga la función replaceAll y las expresiones regulares
+
+// Consonantes se reemplazan por la consonante anterior en el alfabeto (excepto b -> z).
+
+// Espacios se reemplazan por una letra aleatoria del alfabeto.
+
+// Guarda el resultado en towerData.levelSix.secretMessage.
+
+const replaceVowelsForNumbers=(vowelsExtracted)=>{
+  let vowels=vowelsExtracted.join(""); //como las vocales vendran en array, debo pasarlas a string
+  let replacedVowels=vowels
+  .replaceAll(/a/gi, "1")
+  .replaceAll(/e/gi, "2")
+  .replaceAll(/i/gi, "3")
+  .replaceAll(/o/gi, "5")
+  .replaceAll(/u/gi, "1");
+
+  return replacedVowels;
+}
+
+//   const replaceConsonantsForNumbers=(consonantsExtracted)=>{
+//   let consonantsStrings=consonantsExtracted.join(""); //como las vocales vendran en array, debo pasarlas a string
+//   const consonants="BCDFGHJKLMNPQRSTVWXYZ";
+
+//   let replacedConsonants=consonantsStrings
+//   .replaceAll(/B/gi, "1")
+//   .replaceAll(/C/gi, "2")
+//   .replaceAll(/D/gi, "3")
+//   .replaceAll(/F/gi, "5")
+//   .replaceAll(/G/gi, "1");
+
+//   return replacedConsonants;
+
+// }
+
+//FUNCION PARA UNA LETRA RANDOM DEL ABECEDARIO
+const getRandomLetter=()=> {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; 
+
+  let randomLetterIndex=Math.floor(Math.random() * alphabet.length);
+  let randomLetter=alphabet[randomLetterIndex]; //me da una letra en ese indice random
+
+  return randomLetter;
+
+}
+
+const replaceSpaces=(sentence)=>{
+  
+  let replacedSpaces=sentence
+  .replaceAll(/\s/g,getRandomLetter()); // /s revisa los espacios e /g general del string
+
+  return replacedSpaces;
+  
+}
+
 
 //7️⃣ Nivel Siete: El Oráculo de la Suma
 // Calcula la suma total de las longitudes de todas las palabras obtenidas en el nivel 4 y almacénalo en towerData.levelSeven.totalLength.
@@ -171,21 +245,6 @@ const firstInvertedLetter=(totalReveredWords)=>{
 
 // finalMessage = (Total de vocales _ Longitud total obtenida en el nivel 7) + (Cantidad de consonantes _ Número aleatorio generado en Nivel 9) - (Número de palabras * Número de caracteres en el mensaje secreto)
 
-const totalVowels=(vowelsExtracted)=>{
-  let totalVowelNumber=0;
-  for (const vowel of vowelsExtracted) {
-    totalVowelNumber++;
-  }
-  return totalVowelNumber;
-}
-
-const totalConsonants=(consonantsExtracted)=>{
-  let totalConsonantNumber=0;
-  for (const consonant of consonantsExtracted) {
-    totalConsonantNumber++;
-  }
-  return totalConsonantNumber;
-}
 
 
 
@@ -215,10 +274,19 @@ const totalConsonants=(consonantsExtracted)=>{
 
     //5letras en mayusculas
     const allCapsWords=wordsToUpperCase(wordsExtracted);
-    towerData.levelFive.wordsInUpperCase=allCapsWords;
-    console.log(allCapsWords);
+    const lowerCaseWords=wordsTolowerCase(wordsExtracted);
+    // towerData.levelFive.wordsInUpperCase=allCapsWords;
+    towerData.levelFive.uppercasedWords=allCapsWords;
+    towerData.levelFive.lowercasedWords=lowerCaseWords;
+    console.log(`Upper case: ${allCapsWords}` );
+    console.log(`Lower case: ${lowerCaseWords}` );
 
     //6
+    const replacedVowels=replaceVowelsForNumbers(vowelsExtracted);
+    const replacedSpaces=replaceSpaces(sentence);
+    towerData.levelSix.secretMessage=replacedVowels + replacedSpaces;
+    console.log(replacedVowels);
+    console.log(replacedSpaces);
 
     //7
     const totalLetters=totalWordLength(lettersPerWord);
@@ -231,13 +299,18 @@ const totalConsonants=(consonantsExtracted)=>{
     console.log(totalReveredWords);
 
     //9 codigo Secreto
-    const secretCode=firstInvertedLetter(totalReveredWords)+ "-"+totalLettersDivition(totalLetters) + "-"+randomNumberGenerator(); //lo separe por guiones para no perderme
+    const secretCode=firstInvertedLetter(totalReveredWords)+totalLettersDivition(totalLetters)+randomNumberGenerator(); //lo separe por guiones para no perderme
     towerData.levelNine.randomCode=secretCode;
     console.log(secretCode);
 
     //10 codigo final
-    const finalCode=totalVowels(vowelsExtracted) +"-"+ totalLetters +"-"+ totalConsonants(consonantsExtracted)+"-"+randomNumber;
-    towerData.levelTen.finalMessage=finalCode;
+    const totalVowels=vowelsExtracted.length;
+    const totalConsonantsNumber=consonantsExtracted.length;
+    const totalWordCount=wordsExtracted.length;
+    const secretCodeCharacters=secretCode.length;
+    const wordsBySecretNumberCharacters=totalWordCount*secretCodeCharacters;
+    const finalCode=totalVowels+"-"+ totalLetters +"-"+ totalConsonantsNumber+"-"+randomNumber+"-"+wordsBySecretNumberCharacters;
+    towerData.levelTen.finalMessage=finalCode; //lo separe en guiones para leer mejor
     console.log(finalCode);
 
 
