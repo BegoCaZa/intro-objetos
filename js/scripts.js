@@ -94,7 +94,7 @@ const getWordLength=(wordsExtracted)=>{
 // Convierte cada palabra de towerData.levelThree.words a mayúsculas y guárdalas en towerData.levelFive.uppercasedWords.
 
 const wordsToUpperCase=(wordsExtracted)=>{
-  //const wordsInUpperCase=wordsExtracted.toUpperCase(); ??no puedo por que es un array??
+  //wordsInUpperCase=wordsExtracted.toUpperCase(); ??no puedo por que es un array??
   const wordsInUpperCase=[];
 
   for (const words of wordsExtracted) {
@@ -132,51 +132,35 @@ const wordsTolowerCase=(wordsExtracted)=>{
 
 // Guarda el resultado en towerData.levelSix.secretMessage.
 
-const replaceVowelsForNumbers=(vowelsExtracted)=>{
-  let vowels=vowelsExtracted.join(""); //como las vocales vendran en array, debo pasarlas a string
-  let replacedVowels=vowels
-  .replaceAll(/a/gi, "1")
-  .replaceAll(/e/gi, "2")
-  .replaceAll(/i/gi, "3")
-  .replaceAll(/o/gi, "5")
-  .replaceAll(/u/gi, "1");
 
-  return replacedVowels;
-}
+const createSecretMessage=(sentence)=>{
+  let secretMessage=""; //guardar vocales cambiadas
+  let finalMessage=""; //guardar mensaje final
+  const consonants="BCDFGHJKLMNPQRSTVWXYZ";
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-//   const replaceConsonantsForNumbers=(consonantsExtracted)=>{
-//   let consonantsStrings=consonantsExtracted.join(""); //como las vocales vendran en array, debo pasarlas a string
-//   const consonants="BCDFGHJKLMNPQRSTVWXYZ";
+  //SUSTITUIR VOCALES
+  secretMessage= sentence
+  .replaceAll(/a/gi,1)
+  .replaceAll(/e/gi,2)
+  .replaceAll(/i/gi,3)
+  .replaceAll(/o/gi,4)
+  .replaceAll(/u/gi,5);
 
-//   let replacedConsonants=consonantsStrings
-//   .replaceAll(/B/gi, "1")
-//   .replaceAll(/C/gi, "2")
-//   .replaceAll(/D/gi, "3")
-//   .replaceAll(/F/gi, "5")
-//   .replaceAll(/G/gi, "1");
+  //SUSTITUIR CONSONANTES
+  for (const letter of secretMessage.toLocaleLowerCase()) {
+    if (letter ==="b" || letter ==="B"){
+      finalMessage+='z';
+    } else if (consonants.includes(letter)){
+      finalMessage+=consonants.charAt(consonants.indexOf(letter)-1);
+    }else if (letter===" "){//SUSTITUIR ESPACIOS
+      finalMessage+= alphabet.charAt(Math.floor(Math.random()*alphabet.length));
+    } else {
+      finalMessage+=letter;
+    }
+  }
 
-//   return replacedConsonants;
-
-// }
-
-//FUNCION PARA UNA LETRA RANDOM DEL ABECEDARIO
-const getRandomLetter=()=> {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; 
-
-  let randomLetterIndex=Math.floor(Math.random() * alphabet.length);
-  let randomLetter=alphabet[randomLetterIndex]; //me da una letra en ese indice random
-
-  return randomLetter;
-
-}
-
-const replaceSpaces=(sentence)=>{
-  
-  let replacedSpaces=sentence
-  .replaceAll(/\s/g,getRandomLetter()); // /s revisa los espacios e /g general del string
-
-  return replacedSpaces;
-  
+  return finalMessage;
 }
 
 
@@ -243,9 +227,7 @@ const firstInvertedLetter=(totalReveredWords)=>{
 
 // La fórmula del código maestro será la siguiente:
 
-// finalMessage = (Total de vocales _ Longitud total obtenida en el nivel 7) + (Cantidad de consonantes _ Número aleatorio generado en Nivel 9) - (Número de palabras * Número de caracteres en el mensaje secreto)
-
-
+// finalMessage = (Total de vocales - Longitud total obtenida en el nivel 7) + (Cantidad de consonantes - Número aleatorio generado en Nivel 9) - (Número de palabras * Número de caracteres en el mensaje secreto)
 
 
   //FUNCION GENERAL
@@ -282,11 +264,10 @@ const firstInvertedLetter=(totalReveredWords)=>{
     console.log(`Lower case: ${lowerCaseWords}` );
 
     //6
-    const replacedVowels=replaceVowelsForNumbers(vowelsExtracted);
-    const replacedSpaces=replaceSpaces(sentence);
-    towerData.levelSix.secretMessage=replacedVowels + replacedSpaces;
-    console.log(replacedVowels);
-    console.log(replacedSpaces);
+    const secretMessage=createSecretMessage(sentence);
+    towerData.levelSix.secretMessage=secretMessage;
+    console.log(secretMessage);
+   
 
     //7
     const totalLetters=totalWordLength(lettersPerWord);
@@ -304,13 +285,14 @@ const firstInvertedLetter=(totalReveredWords)=>{
     console.log(secretCode);
 
     //10 codigo final
+    // finalMessage = (Total de vocales - Longitud total obtenida en el nivel 7) + (Cantidad de consonantes - Número aleatorio generado en Nivel 9) - (Número de palabras * Número de caracteres en el mensaje secreto)
     const totalVowels=vowelsExtracted.length;
     const totalConsonantsNumber=consonantsExtracted.length;
     const totalWordCount=wordsExtracted.length;
     const secretCodeCharacters=secretCode.length;
-    const wordsBySecretNumberCharacters=totalWordCount*secretCodeCharacters;
-    const finalCode=totalVowels+"-"+ totalLetters +"-"+ totalConsonantsNumber+"-"+randomNumber+"-"+wordsBySecretNumberCharacters;
-    towerData.levelTen.finalMessage=finalCode; //lo separe en guiones para leer mejor
+    
+    const finalCode=(totalVowels-totalLetters) + (totalConsonantsNumber-randomNumber)-(totalWordCount*secretCodeCharacters);
+    towerData.levelTen.finalMessage=finalCode;
     console.log(finalCode);
 
 
